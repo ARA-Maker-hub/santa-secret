@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#2e343b">
+<title>Santa secret · Voie 4</title>
+<style>
+:root{--rouge:#eb0000;--nuit:#1b1f24;--quai:#2e343b;--neige:#f6f5f2;--jaune:#f5c400;--gris:#98a2ad}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--nuit);color:var(--neige);font:400 16px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;-webkit-text-size-adjust:100%}
+body{min-height:100vh;min-height:100dvh}
+main{max-width:760px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-offset:3px}
+[hidden]{display:none!important}
+
+/* écran annonce */
+.billet{background:#fff;color:#1b1b1b;border-radius:6px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.billet .bandeau{background:var(--rouge);color:#fff;padding:10px 18px;display:flex;justify-content:space-between;align-items:baseline;font:700 13px/1.2 system-ui,Arial,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+.billet .corps{padding:22px 20px 24px;display:flex;flex-direction:column;gap:14px}
+.billet h1{margin:0;font:700 30px/1.12 "Barlow Condensed","Arial Narrow",Arial,sans-serif;text-wrap:balance}
+.billet p{margin:0;font-size:16px}
+.billet .regle{border-left:4px solid var(--rouge);padding-left:12px}
+.bouton-rouge{min-height:56px;border:0;border-radius:3px;background:var(--rouge);color:#fff;font:700 17px/1.2 system-ui,Arial,sans-serif;letter-spacing:.02em;padding:14px 18px}
+.bouton-rouge:active{transform:translateY(1px)}
+
+/* scène du tableau */
+.scene{display:flex;flex-direction:column;gap:14px}
+.wrap{width:100%;position:relative;overflow:hidden;border-radius:12px;touch-action:manipulation}
+.stage{position:absolute;left:0;top:0;width:1060px;height:590px;transform-origin:0 0;font-family:"Liberation Sans",Arial,Helvetica,sans-serif;background:#2e343b;background-image:radial-gradient(ellipse 70% 55% at 60% 0,rgba(11,60,180,.45),transparent 70%)}
+.dots{position:absolute;left:0;right:0;top:0;height:230px;background-image:radial-gradient(circle,rgba(160,190,255,.9) 1px,transparent 1.7px);background-size:9px 9px;opacity:.22;-webkit-mask-image:radial-gradient(ellipse 75% 70% at 62% 0,#000,transparent 70%);mask-image:radial-gradient(ellipse 75% 70% at 62% 0,#000,transparent 70%);pointer-events:none}
+.board{position:absolute;left:20px;top:30px;width:1020px;height:530px;padding:14px;border-radius:34px;background-color:#0b3cb4;background-image:linear-gradient(150deg,rgba(255,255,255,.14),rgba(0,0,0,.2));box-shadow:0 0 70px rgba(11,60,180,.45),0 30px 60px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.35)}
+.face{position:relative;width:100%;height:350px;border:3px solid #dfe6f5;border-radius:24px;background-color:#16337f;background-image:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,0) 38%);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.box{position:absolute;left:0;right:0;bottom:0;height:134px;border-radius:0 0 26px 26px;background-color:#0d1530;background-image:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.15));box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.t{position:absolute;white-space:nowrap;font-weight:700;color:#fff;transform-origin:0 0}
+#voie_n{left:22px;top:22px;width:110px;height:104px;text-align:center;border:3px solid #fff;border-radius:20px;font-size:76px;line-height:84px;padding-top:12px;background:#16337f;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 0 18px rgba(255,255,255,.10)}
+#voie_l{left:34px;top:26px;font-size:17px;z-index:2}
+#heure{left:158px;top:26px;font-size:34px}
+#plus{left:300px;top:36px;font-size:17px;color:#f5c400;transform:translate(378px,43px) scale(1.25)}
+#bandeau{right:24px;top:22px;width:360px;height:46px;font-style:italic;font-weight:900;font-size:30px;line-height:46px;padding-left:12px;letter-spacing:1px;background-color:#e2231a;background-image:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 55%);border-radius:12px;box-shadow:0 0 26px rgba(226,35,26,.5),inset 0 1px 0 rgba(255,255,255,.5);transform:translate(-20px,0) scale(1.1)}
+#bandeau span{display:inline-block;transform-origin:left center;transform:scale(1.75,1.2);-webkit-text-stroke:1.2px currentColor}
+#l1a{left:158px;top:92px;font-size:34px;letter-spacing:.4px;transform:translate(0,-10px)}
+#l2a{left:158px;top:138px;font-size:34px;letter-spacing:.4px}
+.sep{position:absolute;left:158px;right:24px;top:268px;height:2px;background:rgba(255,255,255,.35)}
+#nom{left:158px;top:200px;transform:translate(0,-4px) scale(1.2)}
+.cells{display:flex;gap:4px}
+.c{height:54px;min-width:34px;font-size:34px;font-weight:700;text-align:center;line-height:54px;border-radius:9px;position:relative;padding:0 2px;color:#fff;background-color:#1b3d94;background-image:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,0) 50%);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 -2px 0 rgba(0,0,0,.3)}
+.c::after{content:"";position:absolute;left:0;right:0;top:26px;height:2px;background:rgba(0,0,0,.5)}
+.c.sp{min-width:20px;background:none;box-shadow:none}
+.c.sp::after{display:none}
+.c.gone{display:none}
+.c.f{animation:flap .075s ease-out}
+.c.ok{color:#f5c400}
+@keyframes flap{0%{transform:scaleY(.15)}100%{transform:scaleY(1)}}
+#sec_t{left:158px;top:292px;font-size:17px;transform:translate(361px,-18px) scale(1.3)}
+#sec_c{left:250px;top:282px;transform:translate(370px,0) scale(.8)}
+#sec_c .k{display:flex;gap:6px}
+#sec_c i{font-style:normal;font-weight:800;font-size:28px;min-width:44px;height:40px;text-align:center;line-height:40px;padding:0 4px;border-radius:9px;color:#101820;background-color:#f5c400;background-image:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 60%);box-shadow:0 0 14px rgba(245,196,0,.45),inset 0 1px 0 rgba(255,255,255,.6)}
+#lancer{position:absolute;left:230px;top:28px;width:560px;height:76px;text-align:center;font-size:28px;line-height:76px;font-weight:900;-webkit-text-stroke:1.2px currentColor;letter-spacing:.5px;color:#fff;border:1.5px solid rgba(255,255,255,.35);border-radius:999px;cursor:pointer;background-color:#d9231b;background-image:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,.04) 50%),linear-gradient(rgba(255,255,255,.24),rgba(255,255,255,0) 45%,rgba(0,0,0,.2));box-shadow:0 7px 0 #6c110d,0 15px 22px rgba(0,0,0,.5),0 0 26px rgba(217,35,27,.45),inset 0 2px 0 rgba(255,255,255,.45),inset 0 -8px 14px rgba(0,0,0,.25);padding:0;font-family:inherit}
+#lancer:active:not(:disabled){transform:translateY(5px);box-shadow:0 2px 0 #6c110d,0 8px 14px rgba(0,0,0,.5),0 0 26px rgba(217,35,27,.45),inset 0 2px 0 rgba(255,255,255,.45)}
+#lancer:disabled{cursor:default;opacity:.55}
+.fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
+.tampon{position:absolute;left:77%;top:34%;transform:translate(-50%,-50%) rotate(-5deg) scale(2.4);opacity:0;border:4px solid var(--rouge);color:var(--rouge);border-radius:8px;padding:4px 14px;font:700 30px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;letter-spacing:.06em;text-align:center;white-space:nowrap;background:rgba(14,18,22,.55);z-index:5}
+.tampon.on{opacity:1;transform:translate(-50%,-50%) rotate(-5deg) scale(1);transition:transform .22s cubic-bezier(.2,1.6,.5,1),opacity .1s}
+.tampon small{display:block;margin-top:5px;font:600 14px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;letter-spacing:.14em;color:var(--neige)}
+
+.hint{color:var(--gris);font-size:14px;margin:0}
+.rotation{display:none;color:var(--jaune);font-size:14px;margin:0}
+@media (orientation:portrait) and (max-width:600px){.rotation{display:block}}
+.resultat{background:var(--quai);border:1px solid #3a424b;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.resultat .petit{margin:0;color:var(--gris);font-size:14px}
+.resultat .nom-final{margin:0;font:700 34px/1.1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;color:var(--jaune);overflow-wrap:anywhere}
+.resultat .rappel{margin:6px 0 0;font-size:15px}
+.ligne{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.son{display:flex;align-items:center;gap:8px;color:var(--gris);font-size:14px}
+.son input{width:22px;height:22px;accent-color:var(--rouge)}
+.lien{background:none;border:0;color:var(--neige);text-decoration:underline;padding:10px 4px;min-height:44px;font-size:15px}
+.erreur{background:var(--quai);border:1px solid #3a424b;border-left:6px solid var(--rouge);border-radius:8px;padding:16px 18px}
+.erreur h1{margin:0 0 6px;font:700 28px/1.1 "Barlow Condensed","Arial Narrow",Arial,sans-serif}
+.erreur p{margin:0}
+@media (prefers-reduced-motion:reduce){.tampon.on{transition:none}}
+</style>
+</head>
+<body>
+<main>
+
+  <!-- 1. Annonce -->
+  <section id="ecran-annonce" hidden>
+    <article class="billet" aria-labelledby="titre-annonce">
+      <div class="bandeau"><span>Départ 04.12</span><span>Voie 4</span></div>
+      <div class="corps">
+        <h1 id="titre-annonce">Le Secret Santa est de retour ! 🎁</h1>
+        <p>L’heure fatidique approche. Nos agendas s’affolent, le sapin transpire, et c’est le moment de perpétuer notre grande tradition de fin d’année.</p>
+        <p class="regle">La règle d’or : trouver le cadeau idéal pour ton collègue : le clin d’œil hilarant, la babiole inutile mais indispensable ou la mignonnerie absolue. Interdiction de se ruiner, interdiction de faire du premier degré ennuyeux.</p>
+        <p>Garde le secret, prépare ton emballage (ou ton sac kraft froissé), et rendez-vous le jour J ! 🎁✨</p>
+        <button class="bouton-rouge" id="vers-tableau" type="button">Voir mon tirage</button>
+      </div>
+    </article>
+  </section>
+
+  <!-- 2. Tableau -->
+  <section id="ecran-tableau" class="scene" hidden>
+    <p class="rotation">Astuce : tourne ton téléphone en mode paysage pour voir le tableau en grand.</p>
+    <div class="wrap" id="wrap">
+      <div class="stage" id="stage">
+        <div class="dots"></div>
+        <div class="board">
+          <div class="face">
+            <div class="t" id="voie_n">4</div>
+            <div class="t" id="voie_l">Voie</div>
+            <div class="t" id="heure">04.12.2026&nbsp; 12:00</div>
+            <div class="t" id="plus">env. 1 dérangement plus tard</div>
+            <div class="t" id="bandeau"><span>SA-NE</span></div>
+            <div class="t" id="l1a">Repas de Noël</div>
+            <div class="t" id="l2a">Secret Santa</div>
+            <div class="t" id="nom" aria-live="polite"><div class="cells" id="cells"></div></div>
+            <div class="sep"></div>
+            <div class="t" id="sec_t">Secteur</div>
+            <div class="t" id="sec_c"><div class="k"><i>N</i><i>E</i><i>U</i><i>C</i><i>H</i><i>Â</i><i>T</i><i>E</i><i>L</i></div></div>
+          </div>
+          <div class="box"><button type="button" id="lancer">Toucher pour lancer le tirage au sort</button></div>
+        </div>
+        <div class="tampon" id="tampon">Voyage confirmé<small>Bon voyage, bon cadeau</small></div>
+      </div>
+      <canvas class="fx" id="fx"></canvas>
+    </div>
+    <div class="ligne">
+      <label class="son"><input type="checkbox" id="son" checked> Son</label>
+      <span class="hint" id="etat" aria-live="polite">Prêt</span>
+    </div>
+
+    <div class="resultat" id="resultat" hidden>
+      <p class="petit">Tu offres un cadeau à</p>
+      <p class="nom-final" id="nom-final"></p>
+      <p class="rappel">Rendez-vous le <span id="date-rev">04.12.2026</span> au repas de fin d’année. Garde le secret.</p>
+      <button class="lien" id="rejouer" type="button">Revoir l’animation</button>
+    </div>
+  </section>
+
+  <!-- Lien invalide -->
+  <section id="ecran-erreur" class="erreur" hidden>
+    <h1>Ce lien ne fonctionne pas</h1>
+    <p>Il est peut-être incomplet. Demande à Driss de te le renvoyer en entier.</p>
+  </section>
+
+</main>
+<script>
+(function(){
+'use strict';
+var $=function(i){return document.getElementById(i)};
+var SLOTS=16,CH='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+var reduce=false;try{reduce=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)}catch(e){}
+var K=reduce?0.25:1;
+var info=null,running=false,timers=[],rafs=[],sound=true,ac=null;
+
+/* ---------- lien personnel et déchiffrement ---------- */
+function b64d(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+function charger(){
+  var h=(location.hash||'').replace(/^#/,'');
+  if(h==='demo'){return Promise.resolve({de:'Participant 1',pour:'PARTICIPANT 6',date:'04.12.2026',demo:true})}
+  var m=/^(p\d{2})\.([A-Za-z0-9_-]{22})$/.exec(h);
+  if(!m||!window.crypto||!crypto.subtle)return Promise.reject();
+  return fetch('data.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){
+    var blob=d.p&&d.p[m[1]];if(!blob)throw 0;
+    var raw=b64d(blob),iv=raw.slice(0,12),ct=raw.slice(12);
+    return crypto.subtle.importKey('raw',b64d(m[2]),'AES-GCM',false,['decrypt']).then(function(k){
+      return crypto.subtle.decrypt({name:'AES-GCM',iv:iv},k,ct)
+    }).then(function(buf){return JSON.parse(new TextDecoder().decode(buf))});
+  });
+}
+
+/* ---------- mise à l'échelle ---------- */
+function echelle(){var w=$('wrap'),s=$('stage');var k=(w.clientWidth||360)/1060;s.style.transform='scale('+k+')';w.style.height=Math.round(590*k)+'px';sizeFx()}
+
+/* ---------- palettes ---------- */
+var cells=[];
+function initCells(){var host=$('cells');host.textContent='';cells=[];for(var i=0;i<SLOTS;i++){var c=document.createElement('div');c.className='c';c.textContent='?';host.appendChild(c);cells.push(c)}}
+function resetCells(){cells.forEach(function(c){c.className='c';c.textContent='?'});$('tampon').classList.remove('on')}
+function flip(c,ch){c.textContent=ch;c.classList.remove('f');void c.offsetWidth;c.classList.add('f')}
+
+/* ---------- temps et son ---------- */
+function at(ms,fn){timers.push(setTimeout(fn,ms*K))}
+function stopAll(){timers.forEach(clearTimeout);timers=[];rafs.forEach(cancelAnimationFrame);rafs=[]}
+function ctx(){if(!ac){try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){ac=null}}return ac}
+function beep(f,d,type,vol,when){
+  if(!sound)return;var c=ctx();if(!c)return;
+  try{var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(when||0);o.type=type||'square';o.frequency.value=f;g.gain.setValueAtTime(vol||.05,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d)}catch(e){}
+}
+function tick(){beep(1700+Math.random()*500,.03,'square',.03)}
+function thud(){beep(85,.28,'sine',.3)}
+function ding(){beep(880,.5,'sine',.12);beep(1320,.6,'sine',.08,.12)}
+function voix(src){if(!sound)return;try{var a=new Audio(src);a.play().catch(function(){})}catch(e){}}
+
+/* ---------- confettis et neige ---------- */
+var cv=$('fx'),g=cv.getContext?cv.getContext('2d'):null,W=0,H=0,flakes=[],conf=[];
+function sizeFx(){if(!g)return;var r=cv.getBoundingClientRect(),d=Math.min(2,window.devicePixelRatio||1);W=r.width;H=r.height;cv.width=Math.max(1,W*d);cv.height=Math.max(1,H*d);g.setTransform(d,0,0,d,0,0)}
+function initFlakes(){flakes=[];for(var i=0;i<40;i++)flakes.push({x:Math.random(),y:Math.random(),r:.8+Math.random()*1.6,s:.04+Math.random()*.08,w:Math.random()*6})}
+function confetti(){
+  if(reduce||!g)return;var cols=['#eb0000','#f6f5f2','#f5c400','#98a2ad'];
+  for(var i=0;i<120;i++)conf.push({x:W/2+(Math.random()-.5)*80,y:H*.6,vx:(Math.random()-.5)*7,vy:-4-Math.random()*8,rot:Math.random()*6,vr:(Math.random()-.5)*.4,w:5+Math.random()*5,h:3+Math.random()*4,c:cols[i%4],life:1});
+}
+function boucle(){
+  if(g&&W){
+    g.clearRect(0,0,W,H);
+    if(!reduce){g.fillStyle='rgba(246,245,242,.75)';flakes.forEach(function(f){f.y+=f.s*.03;f.w+=.02;if(f.y>1.02){f.y=-.02;f.x=Math.random()}g.beginPath();g.arc((f.x+Math.sin(f.w)*.012)*W,f.y*H,f.r,0,6.3);g.fill()})}
+    conf=conf.filter(function(p){return p.life>0&&p.y<H+20});
+    conf.forEach(function(p){p.vy+=.25;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.life-=.004;g.save();g.translate(p.x,p.y);g.rotate(p.rot);g.fillStyle=p.c;g.globalAlpha=Math.max(0,Math.min(1,p.life*2));g.fillRect(-p.w/2,-p.h/2,p.w,p.h);g.restore()});
+  }
+  requestAnimationFrame(boucle);
+}
+
+/* ---------- animation du tirage ---------- */
+function lancer(){
+  if(running||!info)return;
+  stopAll();running=true;resetCells();
+  var nom=String(info.pour||'').toUpperCase().slice(0,SLOTS);
+  var btn=$('lancer');btn.disabled=true;$('etat').textContent='Le tableau se met à jour…';$('resultat').hidden=true;
+  var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}
+  voix('voix/intro.mp3');
+  cells.forEach(function(c,i){
+    var settle=1500+i*170,ch=nom.charAt(i);
+    for(var t=0;t<settle;t+=80){(function(){at(t,function(){if(ch===''&&t>settle-400)return;flip(c,CH.charAt(Math.floor(Math.random()*CH.length)));if(Math.random()<.4)tick()})})()}
+    at(settle,function(){
+      if(ch===''){c.className='c gone';return}
+      if(ch===' '){c.className='c sp';c.textContent='';return}
+      flip(c,ch);c.classList.add('ok');tick();
+    });
+  });
+  var fin=1500+(Math.max(nom.length,1)-1)*170;
+  at(fin+350,function(){$('tampon').classList.add('on');thud();ding();confetti();voix('voix/'+(info.id||'resultat')+'.mp3')});
+  at(fin+1500,function(){
+    running=false;btn.disabled=false;btn.textContent='Revoir le tirage';$('etat').textContent='Terminé';
+    $('nom-final').textContent=info.pour;$('date-rev').textContent=info.date||'04.12.2026';$('resultat').hidden=false;
+  });
+}
+
+/* ---------- démarrage ---------- */
+function montrer(id){['ecran-annonce','ecran-tableau','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau')echelle()}
+$('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0)};
+$('lancer').onclick=lancer;
+$('rejouer').onclick=function(){lancer();window.scrollTo(0,0)};
+$('son').onchange=function(){sound=$('son').checked;if(sound){var c=ctx();if(c&&c.resume){try{c.resume()}catch(e){}}tick()}};
+window.addEventListener('resize',echelle);
+window.addEventListener('orientationchange',function(){setTimeout(echelle,200)});
+initCells();initFlakes();sizeFx();boucle();
+charger().then(function(d){info=d;montrer('ecran-annonce')}).catch(function(){montrer('ecran-erreur')});
+})();
+</script>
+</body>
+</html>
