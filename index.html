@@ -199,7 +199,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v9 · 20.11 · 12:25</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v10 · 20.11 · 13:15</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -222,7 +222,7 @@ function charger(){
     var raw=b64d(blob),iv=raw.slice(0,12),ct=raw.slice(12);
     return crypto.subtle.importKey('raw',b64d(m[2]),'AES-GCM',false,['decrypt']).then(function(k){
       return crypto.subtle.decrypt({name:'AES-GCM',iv:iv},k,ct)
-    }).then(function(buf){return JSON.parse(new TextDecoder().decode(buf))});
+    }).then(function(buf){var o=JSON.parse(new TextDecoder().decode(buf));return crypto.subtle.digest('SHA-256',b64d(m[2])).then(function(d){var u=new Uint8Array(d),x='';for(var i=0;i<8;i++)x+=('0'+u[i].toString(16)).slice(-2);o.id=x;return o})});
   });
 }
 
@@ -289,7 +289,7 @@ function lancer(){
     });
   });
   var fin=1500+n*170+300;
-  at(fin+450,function(){$('tampon').classList.add('on');thud();ding();confetti();voix('voix/'+(info.id||'resultat')+'.mp3')});
+  at(fin+450,function(){$('tampon').classList.add('on');thud();ding();confetti();if(info.id)voix('voix/'+info.id+'.mp3')});
   at(fin+1600,function(){
     running=false;deja=true;btn.disabled=false;$('lancer-t').textContent='Revoir le tirage';$('etat').textContent='Terminé';
     $('prenom-de').textContent=(info.de||'').toUpperCase()+',';$('nom-final').textContent=info.pour;$('date-rev').textContent=info.date||'04.12.2026';$('resultat').hidden=false;
