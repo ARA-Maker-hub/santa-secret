@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#2e343b">
@@ -77,6 +78,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
 .menu-img{margin:14px 0 4px;text-align:center}
 .menu-img img{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .menu-img .maps{display:inline-block;margin-top:10px;padding:10px 6px;color:var(--neige);font-size:15px;text-decoration:underline}
+.maj{display:flex;justify-content:center;align-items:center;gap:10px;padding:14px 12px 28px;color:var(--gris);font-size:13px}
+.maj button{background:none;border:1px solid #3a424b;border-radius:999px;color:var(--neige);padding:10px 16px;min-height:44px;font:600 14px system-ui,Arial,sans-serif}
 /* carte menu de Noël */
 .menu{position:relative;margin:14px 0 4px;padding:26px 22px 22px;border-radius:6px;color:#3a2a1c;text-align:center;font-family:"Cormorant Garamond","Playfair Display",Georgia,"Times New Roman",serif;background:radial-gradient(120% 90% at 50% 0%,#fbf5e6 0%,#f1e6cc 100%);box-shadow:0 14px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(122,86,30,.25)}
 .menu::before{content:"";position:absolute;inset:8px;border:1.5px solid #b8892b;border-radius:3px;pointer-events:none}
@@ -176,6 +179,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
   </section>
 
 </main>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v2 · 20.11 · 05:55</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p>Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -277,6 +281,14 @@ $('rejouer').onclick=function(){demander();window.scrollTo(0,0)};
 $('conf-non').onclick=function(){$('confirme').hidden=true};
 $('conf-oui').onclick=function(){$('confirme').hidden=true;lancer()};
 $('confirme').onclick=function(e){if(e.target===$('confirme'))$('confirme').hidden=true};
+$('maj').onclick=function(){
+  var b=$('maj');b.disabled=true;b.textContent='Mise à jour…';
+  var fin=function(){var u=location.pathname+'?m='+Date.now()+(location.hash||'');location.replace(u)};
+  var p=[];
+  try{if(window.caches&&caches.keys)p.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}))}catch(e){}
+  try{if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations)p.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister()}))}))}catch(e){}
+  Promise.all(p).then(fin,fin);setTimeout(fin,2500);
+};
 $('son').onchange=function(){sound=$('son').checked;if(sound){var c=ctx();if(c&&c.resume){try{c.resume()}catch(e){}}tick()}};
 window.addEventListener('resize',echelle);
 window.addEventListener('orientationchange',function(){setTimeout(echelle,200)});
