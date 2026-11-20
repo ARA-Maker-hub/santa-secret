@@ -29,6 +29,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
 
 /* scène du tableau */
 .scene{display:flex;flex-direction:column;gap:14px}
+@media (max-width:600px){#ecran-tableau .wrap{margin-left:-12px;margin-right:-12px;width:auto;border-radius:10px}}
 .wrap{width:100%;position:relative;overflow:hidden;border-radius:12px;touch-action:manipulation}
 .stage{position:absolute;left:0;top:0;width:1060px;height:590px;transform-origin:0 0;font-family:"Liberation Sans",Arial,Helvetica,sans-serif;background:#2e343b;background-image:radial-gradient(ellipse 70% 55% at 60% 0,rgba(11,60,180,.45),transparent 70%)}
 .dots{position:absolute;left:0;right:0;top:0;height:230px;background-image:radial-gradient(circle,rgba(160,190,255,.9) 1px,transparent 1.7px);background-size:9px 9px;opacity:.22;-webkit-mask-image:radial-gradient(ellipse 75% 70% at 62% 0,#000,transparent 70%);mask-image:radial-gradient(ellipse 75% 70% at 62% 0,#000,transparent 70%);pointer-events:none}
@@ -199,7 +200,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v8 · 20.11 · 11:55</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v9 · 20.11 · 12:10</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -227,7 +228,7 @@ function charger(){
 }
 
 /* ---------- mise à l'échelle ---------- */
-function echelle(){var w=$('wrap'),s=$('stage');var k=(w.clientWidth||360)/1060;s.style.transform='scale('+k+')';w.style.height=Math.round(590*k)+'px';sizeFx()}
+function echelle(){var w=$('wrap'),s=$('stage');var cw=w.clientWidth||360,etroit=window.innerWidth<=600;var k=cw/(etroit?1010:1060);s.style.transform=etroit?'scale('+k+') translate(-25px,-35px)':'scale('+k+')';w.style.height=Math.round((etroit?520:590)*k)+'px';sizeFx()}
 
 /* ---------- palettes ---------- */
 var cells=[];
