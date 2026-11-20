@@ -130,7 +130,7 @@ html,body{font-family:var(--se);font-weight:400}
 .resultat{position:relative}
 .reset{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:1px solid #3a424b;background:none;color:var(--neige);display:flex;align-items:center;justify-content:center;padding:0}
 .reset:active{transform:rotate(180deg)}
-.noel{position:relative;margin:14px 0 4px;border-radius:6px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.45);line-height:0}
+.noel{position:relative;margin:10px auto 0;border-radius:6px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.45);line-height:0}
 .noel img{display:block;width:100%;height:auto}
 .noel::after{content:"";position:absolute;inset:8px;border:1px solid rgba(217,180,90,.75);border-radius:4px;pointer-events:none}
 .noel i{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%)}
@@ -227,7 +227,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v14 · 20.11 · 14:30</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v15 · 20.11 · 15:25</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -329,7 +329,13 @@ function continuer(){
 }
 
 /* ---------- démarrage ---------- */
-function montrer(id){['ecran-annonce','ecran-tableau','ecran-resultat','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau')echelle()}
+function ajusteNoel(){
+  var n=$('noel'),sc=$('ecran-tableau');if(!n||sc.hidden)return;
+  var ft=document.querySelector('footer'),fh=ft?ft.offsetHeight:0,top=n.getBoundingClientRect().top+window.pageYOffset,dispo=window.innerHeight-top-fh-6,max=sc.clientWidth||360;
+  var w=Math.max(160,Math.min(max,Math.floor(dispo*784/1168)));n.style.width=w+'px';
+  var ex=document.documentElement.scrollHeight-window.innerHeight;if(ex>0&&w>160)n.style.width=Math.max(160,w-Math.ceil(ex*784/1168))+'px';
+}
+function montrer(id){['ecran-annonce','ecran-tableau','ecran-resultat','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau'){echelle();ajusteNoel()}}
 $('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0);var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}var b=$('lancer');deja=false;$('lancer-t').textContent='Lancer le tirage';b.hidden=true;$('etat').textContent='Écoute l’annonce…';var ok=false,go=function(){if(ok)return;ok=true;b.hidden=false;b.disabled=false;$('etat').textContent='Prêt'};if(!voix('voix/intro.mp3',go))go();else setTimeout(go,13500)};
 var deja=false;
 var actionOui=null;
@@ -362,8 +368,8 @@ $('son').onchange=function(){sound=$('son').checked;if(sound){var c=ctx();if(c&&
   for(i=0;i<18;i++){var y=33+Math.random()*52,half=(y-29)*.36+1,x=50+(Math.random()*2-1)*half;e=add('lu',null,x,y);var rr=2+Math.random()*2;e.style.width=e.style.height=rr+'px';var c=['#fff0b0','#ffd45a','#ff9a6a','#a8d4ff'][i%4];e.style.background=c;e.style.boxShadow='0 0 6px 2px '+c;e.style.animationDelay=(Math.random()*2.4)+'s'}
   for(i=0;i<14;i++){e=add('fl2',{'--dx':(Math.random()*50-25)+'px','--h':'560px'},Math.random()*100,0);var d=2+Math.random()*2.2;e.style.width=e.style.height=d+'px';e.style.animationDuration=(12+Math.random()*10)+'s';e.style.animationDelay=(-Math.random()*20)+'s'}
 })();
-window.addEventListener('resize',echelle);
-window.addEventListener('orientationchange',function(){setTimeout(echelle,200)});
+window.addEventListener('resize',function(){echelle();ajusteNoel()});
+window.addEventListener('orientationchange',function(){setTimeout(function(){echelle();ajusteNoel()},200)});
 initCells();initFlakes();sizeFx();boucle();
 charger().then(function(d){info=d;montrer('ecran-annonce')}).catch(function(){montrer('ecran-erreur')});
 })();
