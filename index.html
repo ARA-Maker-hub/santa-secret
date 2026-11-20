@@ -83,7 +83,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
 .menu-img .zone-maps{position:absolute;left:26%;width:48%;top:85.5%;height:10.5%;display:block;-webkit-tap-highlight-color:rgba(245,196,0,.25);border-radius:6px}
 .menu-img img{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .menu-img .maps{display:inline-block;margin-top:10px;padding:10px 6px;color:var(--neige);font-size:15px;text-decoration:underline}
-.maj{display:flex;justify-content:center;align-items:center;gap:10px;padding:14px 12px 28px;color:var(--gris);font-size:13px}
+.maj{display:flex;justify-content:center;align-items:center;gap:10px;padding:0 12px 4px;margin-top:-8px;color:var(--gris);font-size:13px}
 .maj button{background:none;border:1px solid #3a424b;border-radius:999px;color:var(--neige);padding:10px 16px;min-height:44px;font:600 14px system-ui,Arial,sans-serif}
 /* police Special Elite : tous les textes sauf le tableau d'affichage (.stage) et la carte menu (image) ; gras seulement pour les titres, bandeau et boutons */
 @font-face{font-family:"Special Elite";src:url(fonts/SpecialElite.ttf) format("truetype");font-weight:400;font-display:swap}
@@ -130,7 +130,7 @@ html,body{font-family:var(--se);font-weight:400}
 .resultat{position:relative}
 .reset{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:1px solid #3a424b;background:none;color:var(--neige);display:flex;align-items:center;justify-content:center;padding:0}
 .reset:active{transform:rotate(180deg)}
-.noel{position:relative;margin:10px auto 0;border-radius:6px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.45);line-height:0}
+.noel{position:relative;margin:2px auto 0;border-radius:6px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.45);line-height:0}
 .noel img{display:block;width:100%;height:auto}
 .noel::after{content:"";position:absolute;inset:8px;border:1px solid rgba(217,180,90,.75);border-radius:4px;pointer-events:none}
 .noel i{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%)}
@@ -227,7 +227,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v15 · 20.11 · 15:25</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v16 · 20.11 · 15:40</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -331,7 +331,7 @@ function continuer(){
 /* ---------- démarrage ---------- */
 function ajusteNoel(){
   var n=$('noel'),sc=$('ecran-tableau');if(!n||sc.hidden)return;
-  var ft=document.querySelector('footer'),fh=ft?ft.offsetHeight:0,top=n.getBoundingClientRect().top+window.pageYOffset,dispo=window.innerHeight-top-fh-6,max=sc.clientWidth||360;
+  var ft=document.querySelector('footer'),fh=ft?ft.offsetHeight:0,top=n.getBoundingClientRect().top+window.pageYOffset,dispo=window.innerHeight-top-fh-2,max=sc.clientWidth||360;
   var w=Math.max(160,Math.min(max,Math.floor(dispo*784/1168)));n.style.width=w+'px';
   var ex=document.documentElement.scrollHeight-window.innerHeight;if(ex>0&&w>160)n.style.width=Math.max(160,w-Math.ceil(ex*784/1168))+'px';
 }
