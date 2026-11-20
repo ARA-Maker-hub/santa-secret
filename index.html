@@ -203,7 +203,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v11 · 20.11 · 13:40</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v12 · 20.11 · 13:30</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -250,7 +250,7 @@ function beep(f,d,type,vol,when){
 function tick(){beep(1700+Math.random()*500,.03,'square',.03)}
 function thud(){beep(85,.28,'sine',.3)}
 function ding(){beep(880,.5,'sine',.12);beep(1320,.6,'sine',.08,.12)}
-function voix(src){if(!sound)return;try{var a=new Audio(src);a.play().catch(function(){})}catch(e){}}
+function voix(src,fin){if(!sound)return false;try{var a=new Audio(src);if(fin)a.addEventListener('ended',fin);a.play().catch(function(){});return true}catch(e){return false}}
 
 /* ---------- confettis et neige ---------- */
 var cv=$('fx'),g=cv.getContext?cv.getContext('2d'):null,W=0,H=0,flakes=[],conf=[];
@@ -281,7 +281,7 @@ function lancer(){
   var gl=Math.floor((n-nom.length)/2);
   var btn=$('lancer');btn.disabled=true;btn.hidden=true;$('tampon').classList.remove('on');$('etat').textContent='Le tableau se met à jour…';
   var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}
-  var fin0=1500+n*170+300,T=12600,sc=T/(fin0+450);
+  var fin0=1500+n*170+300,sc=1,T=fin0+450;
   cells.forEach(function(c,i){
     var bell=(i===0||i===n+1),k=i-1,ch=bell?'':((k>=gl&&k-gl<nom.length)?nom.charAt(k-gl):'');
     var settle=bell?1500+n*170+300:1500+k*170;
@@ -294,7 +294,7 @@ function lancer(){
   });
   at(T,function(){$('tampon').classList.add('on');thud();ding();confetti()});
   at(T+1100,function(){
-    running=false;deja=true;btn.hidden=false;btn.disabled=false;$('etat').textContent='Terminé';
+    running=false;deja=true;$('lancer-t').textContent='Continuer';btn.hidden=false;btn.disabled=false;$('etat').textContent='Terminé';
   });
 }
 function continuer(){
@@ -306,14 +306,14 @@ function continuer(){
 
 /* ---------- démarrage ---------- */
 function montrer(id){['ecran-annonce','ecran-tableau','ecran-resultat','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau')echelle()}
-$('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0);var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}voix('voix/intro.mp3');lancer()};
+$('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0);var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}var b=$('lancer');deja=false;$('lancer-t').textContent='Lancer le tirage';b.hidden=true;$('etat').textContent='Écoute l’annonce…';var ok=false,go=function(){if(ok)return;ok=true;b.hidden=false;b.disabled=false;$('etat').textContent='Prêt'};if(!voix('voix/intro.mp3',go))go();else setTimeout(go,13500)};
 var deja=false;
 var actionOui=null;
 function confirmer(titre,texte,oui,fn){$('conf-t').textContent=titre;$('conf-p').textContent=texte;$('conf-oui').textContent=oui;actionOui=fn;$('confirme').hidden=false;$('conf-oui').focus()}
 function demander(){if(running)return;if(!deja){lancer();return}confirmer('Relancer le tirage ?','Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉','Relancer',lancer)}
 var MAPS='https://maps.google.com/?q=Restaurant+Le+Sporting,+All.+des+Marronniers+7,+2013+Colombier';
 document.querySelector('.zone-maps').onclick=function(e){e.preventDefault();confirmer('Ouvrir Maps ?','Tu vas quitter l’app pour afficher le Restaurant Le Sporting, Allée des Marronniers 7, 2013 Colombier.','Ouvrir',function(){var a=document.createElement('a');a.href=MAPS;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();document.body.removeChild(a)})};
-$('lancer').onclick=continuer;
+$('lancer').onclick=function(){if(running)return;if(deja)continuer();else lancer()};
 $('conf-non').onclick=function(){$('confirme').hidden=true};
 $('conf-oui').onclick=function(){$('confirme').hidden=true;var f=actionOui;actionOui=null;if(f)f()};
 $('confirme').onclick=function(e){if(e.target===$('confirme'))$('confirme').hidden=true};
