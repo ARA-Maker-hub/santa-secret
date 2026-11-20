@@ -179,8 +179,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v3 · 20.11 · 06:00</span></footer>
-<div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p>Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v4 · 20.11 · 06:05</span></footer>
+<div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
 'use strict';
@@ -275,10 +275,14 @@ function lancer(){
 function montrer(id){['ecran-annonce','ecran-tableau','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau')echelle()}
 $('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0)};
 var deja=false;
-function demander(){if(running)return;if(!deja){lancer();return}$('confirme').hidden=false;$('conf-oui').focus()}
+var actionOui=null;
+function confirmer(titre,texte,oui,fn){$('conf-t').textContent=titre;$('conf-p').textContent=texte;$('conf-oui').textContent=oui;actionOui=fn;$('confirme').hidden=false;$('conf-oui').focus()}
+function demander(){if(running)return;if(!deja){lancer();return}confirmer('Relancer le tirage ?','Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉','Relancer',lancer)}
+var MAPS='https://maps.google.com/?q=Restaurant+Le+Sporting,+All.+des+Marronniers+7,+2013+Colombier';
+document.querySelector('.zone-maps').onclick=function(e){e.preventDefault();confirmer('Ouvrir Maps ?','Tu vas quitter l’app pour afficher le Restaurant Le Sporting, Allée des Marronniers 7, 2013 Colombier.','Ouvrir',function(){var a=document.createElement('a');a.href=MAPS;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();document.body.removeChild(a)})};
 $('lancer').onclick=demander;
 $('conf-non').onclick=function(){$('confirme').hidden=true};
-$('conf-oui').onclick=function(){$('confirme').hidden=true;lancer()};
+$('conf-oui').onclick=function(){$('confirme').hidden=true;var f=actionOui;actionOui=null;if(f)f()};
 $('confirme').onclick=function(e){if(e.target===$('confirme'))$('confirme').hidden=true};
 $('maj').onclick=function(){
   var b=$('maj');b.disabled=true;b.textContent='Mise à jour…';
