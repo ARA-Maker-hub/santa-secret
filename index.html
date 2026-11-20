@@ -126,7 +126,7 @@ html,body{font-family:var(--se);font-weight:400}
 .stamp-son{position:absolute;top:24px;right:16px;border:3px solid var(--rouge);color:var(--rouge);border-radius:6px;padding:4px 7px;font:700 14px/1.1 var(--se);text-transform:uppercase;text-align:center;letter-spacing:.04em;transform:rotate(6deg);pointer-events:none}
 .box .son{position:absolute;left:0;top:0;width:290px;height:134px;justify-content:center;font-size:36px;gap:14px;margin:0;cursor:pointer}
 .box .son input{width:44px;height:44px}
-.box .hint{position:absolute;left:730px;right:0;top:0;height:134px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:30px;line-height:1.15;padding:0 12px}
+.box .hint{position:absolute;left:730px;right:0;top:0;height:134px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:34px;line-height:1.15;padding:0 10px;color:#d5deee}
 .resultat{position:relative}
 .reset{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:1px solid #3a424b;background:none;color:var(--neige);display:flex;align-items:center;justify-content:center;padding:0}
 .reset:active{transform:rotate(180deg)}
@@ -194,7 +194,7 @@ html,body{font-family:var(--se);font-weight:400}
             <div class="t" id="sec_t">Secteur</div>
             <div class="t" id="sec_c"><div class="k"><i>N</i><i>E</i><i>U</i><i>C</i><i>H</i><i>Â</i><i>T</i><i>E</i><i>L</i></div></div>
           </div>
-          <div class="box"><label class="son"><input type="checkbox" id="son" checked> Son</label><span class="hint" id="etat" aria-live="polite">Prêt</span><button type="button" id="lancer"><span id="lancer-t">Continuer</span></button></div>
+          <div class="box"><label class="son"><input type="checkbox" id="son" checked> Son</label><span class="hint" id="etat" aria-live="polite"></span><button type="button" id="lancer"><span id="lancer-t">Continuer</span></button></div>
         </div>
         <div class="tampon" id="tampon">Tirage confirmé</div>
       </div>
@@ -303,7 +303,7 @@ function lancer(){
   if(cells.length!==n+2)initCells(n);
   resetCells();
   var gl=Math.floor((n-nom.length)/2);
-  var btn=$('lancer');btn.disabled=true;btn.hidden=true;$('tampon').classList.remove('on');$('etat').textContent='Le tableau se met à jour…';
+  var btn=$('lancer');btn.disabled=true;btn.hidden=true;$('tampon').classList.remove('on');$('etat').textContent='';
   var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}
   var fin0=1500+n*170+300,sc=1,T=fin0+450;
   cells.forEach(function(c,i){
@@ -318,7 +318,7 @@ function lancer(){
   });
   at(T,function(){$('tampon').classList.add('on');thud();ding();confetti()});
   at(T+1100,function(){
-    running=false;deja=true;$('lancer-t').textContent='Continuer';btn.hidden=false;btn.disabled=false;$('etat').textContent='Terminé';
+    running=false;deja=true;$('lancer-t').textContent='Continuer';btn.hidden=false;btn.disabled=false;$('etat').textContent='';
   });
 }
 function continuer(){
@@ -338,7 +338,7 @@ function ajusteNoel(){
   var ex=document.documentElement.scrollHeight-window.innerHeight;if(ex>0)pose(H-ex);
 }
 function montrer(id){['ecran-annonce','ecran-tableau','ecran-resultat','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau'){echelle();ajusteNoel()}}
-$('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0);var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}var b=$('lancer');deja=false;$('lancer-t').textContent='Lancer le tirage';b.hidden=true;$('etat').textContent='Écoute l’annonce…';var ok=false,go=function(){if(ok)return;ok=true;b.hidden=false;b.disabled=false;$('etat').textContent='Prêt'};if(!voix('voix/intro.mp3',go))go();else setTimeout(go,13500)};
+$('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0);var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}var b=$('lancer');deja=false;$('lancer-t').textContent='Lancer le tirage';b.hidden=true;$('etat').textContent='Écoute l’annonce…';var ok=false,go=function(){if(ok)return;ok=true;b.hidden=false;b.disabled=false;$('etat').textContent=''};if(!voix('voix/intro.mp3',go))go();else setTimeout(go,13500)};
 var deja=false;
 var actionOui=null;
 function confirmer(titre,texte,oui,fn){$('conf-t').textContent=titre;$('conf-p').textContent=texte;$('conf-oui').textContent=oui;actionOui=fn;$('confirme').hidden=false;$('conf-oui').focus()}
@@ -357,7 +357,7 @@ function majApp(){
   try{if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations)p.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister()}))}))}catch(e){}
   Promise.all(p).then(fin,fin);setTimeout(fin,2500);
 }
-$('reset').onclick=majApp;
+$('reset').onclick=function(){confirmer('Recommencer ?','L’app repart du début : annonce, tirage, résultat. Ton destinataire reste le même.','Recommencer',majApp)};
 $('son').onchange=function(){sound=$('son').checked;if(sound){var c=ctx();if(c&&c.resume){try{c.resume()}catch(e){}}tick()}};
 (function(){
   var n=$('noel-in');if(!n)return;
