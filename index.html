@@ -169,7 +169,7 @@ html,body{font-family:var(--se);font-weight:400}
             <div class="t" id="sec_t">Secteur</div>
             <div class="t" id="sec_c"><div class="k"><i>N</i><i>E</i><i>U</i><i>C</i><i>H</i><i>Â</i><i>T</i><i>E</i><i>L</i></div></div>
           </div>
-          <div class="box"><button type="button" id="lancer"><span id="lancer-t">Lancer le tirage</span></button></div>
+          <div class="box"><button type="button" id="lancer"><span id="lancer-t">Continuer</span></button></div>
         </div>
         <div class="tampon" id="tampon">Tirage confirmé</div>
       </div>
@@ -180,7 +180,11 @@ html,body{font-family:var(--se);font-weight:400}
       <span class="hint" id="etat" aria-live="polite">Prêt</span>
     </div>
 
-    <div class="resultat" id="resultat" hidden>
+  </section>
+
+  <!-- 3. Résultat -->
+  <section id="ecran-resultat" hidden>
+    <div class="resultat" id="resultat">
       <p class="prenom" id="prenom-de"></p>
       <p class="petit">Tu offres un cadeau à</p>
       <p class="nom-final" id="nom-final"></p>
@@ -199,7 +203,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v10 · 20.11 · 13:15</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v11 · 20.11 · 13:40</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -275,37 +279,41 @@ function lancer(){
   if(cells.length!==n+2)initCells(n);
   resetCells();
   var gl=Math.floor((n-nom.length)/2);
-  var btn=$('lancer');btn.disabled=true;$('etat').textContent='Le tableau se met à jour…';$('resultat').hidden=true;
+  var btn=$('lancer');btn.disabled=true;btn.hidden=true;$('tampon').classList.remove('on');$('etat').textContent='Le tableau se met à jour…';
   var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}
-  voix('voix/intro.mp3');
+  var fin0=1500+n*170+300,T=12600,sc=T/(fin0+450);
   cells.forEach(function(c,i){
     var bell=(i===0||i===n+1),k=i-1,ch=bell?'':((k>=gl&&k-gl<nom.length)?nom.charAt(k-gl):'');
     var settle=bell?1500+n*170+300:1500+k*170;
-    for(var t=0;t<settle;t+=80){(function(tt){at(tt,function(){flip(c,CH.charAt(Math.floor(Math.random()*CH.length)));if(!bell&&Math.random()<.4)tick()})})(t)}
-    at(settle,function(){
+    for(var t=0;t<settle;t+=80){(function(tt){at(tt*sc,function(){flip(c,CH.charAt(Math.floor(Math.random()*CH.length)));if(!bell&&Math.random()<.4)tick()})})(t)}
+    at(settle*sc,function(){
       if(bell){c.className='c cl';flip(c,BELL);tick();return}
       if(ch===''){c.className='c';c.textContent='';return}
       flip(c,ch);c.classList.add('ok');tick();
     });
   });
-  var fin=1500+n*170+300;
-  at(fin+450,function(){$('tampon').classList.add('on');thud();ding();confetti();if(info.id)voix('voix/'+info.id+'.mp3')});
-  at(fin+1600,function(){
-    running=false;deja=true;btn.disabled=false;$('lancer-t').textContent='Revoir le tirage';$('etat').textContent='Terminé';
-    $('prenom-de').textContent=(info.de||'').toUpperCase()+',';$('nom-final').textContent=info.pour;$('date-rev').textContent=info.date||'04.12.2026';$('resultat').hidden=false;
+  at(T,function(){$('tampon').classList.add('on');thud();ding();confetti()});
+  at(T+1100,function(){
+    running=false;deja=true;btn.hidden=false;btn.disabled=false;$('etat').textContent='Terminé';
   });
+}
+function continuer(){
+  if(running||!deja)return;
+  $('prenom-de').textContent=(info.de||'').toUpperCase()+',';$('nom-final').textContent=info.pour;$('date-rev').textContent=info.date||'04.12.2026';
+  montrer('ecran-resultat');window.scrollTo(0,0);
+  if(info.id)voix('voix/'+info.id+'.mp3');
 }
 
 /* ---------- démarrage ---------- */
-function montrer(id){['ecran-annonce','ecran-tableau','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau')echelle()}
-$('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0)};
+function montrer(id){['ecran-annonce','ecran-tableau','ecran-resultat','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau')echelle()}
+$('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0);var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}voix('voix/intro.mp3');lancer()};
 var deja=false;
 var actionOui=null;
 function confirmer(titre,texte,oui,fn){$('conf-t').textContent=titre;$('conf-p').textContent=texte;$('conf-oui').textContent=oui;actionOui=fn;$('confirme').hidden=false;$('conf-oui').focus()}
 function demander(){if(running)return;if(!deja){lancer();return}confirmer('Relancer le tirage ?','Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉','Relancer',lancer)}
 var MAPS='https://maps.google.com/?q=Restaurant+Le+Sporting,+All.+des+Marronniers+7,+2013+Colombier';
 document.querySelector('.zone-maps').onclick=function(e){e.preventDefault();confirmer('Ouvrir Maps ?','Tu vas quitter l’app pour afficher le Restaurant Le Sporting, Allée des Marronniers 7, 2013 Colombier.','Ouvrir',function(){var a=document.createElement('a');a.href=MAPS;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();document.body.removeChild(a)})};
-$('lancer').onclick=demander;
+$('lancer').onclick=continuer;
 $('conf-non').onclick=function(){$('confirme').hidden=true};
 $('conf-oui').onclick=function(){$('confirme').hidden=true;var f=actionOui;actionOui=null;if(f)f()};
 $('confirme').onclick=function(e){if(e.target===$('confirme'))$('confirme').hidden=true};
