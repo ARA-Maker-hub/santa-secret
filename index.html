@@ -121,6 +121,15 @@ html,body{font-family:var(--se);font-weight:400}
 .erreur{background:var(--quai);border:1px solid #3a424b;border-left:6px solid var(--rouge);border-radius:8px;padding:16px 18px}
 .erreur h1{margin:0 0 6px;font:700 28px/1.1 "Barlow Condensed","Arial Narrow",Arial,sans-serif}
 .erreur p{margin:0}
+.billet .corps{position:relative}
+.billet h1{padding-right:78px}
+.stamp-son{position:absolute;top:24px;right:16px;border:3px solid var(--rouge);color:var(--rouge);border-radius:6px;padding:4px 7px;font:700 14px/1.1 var(--se);text-transform:uppercase;text-align:center;letter-spacing:.04em;transform:rotate(6deg);pointer-events:none}
+.box .son{position:absolute;left:0;top:0;width:290px;height:134px;justify-content:center;font-size:36px;gap:14px;margin:0;cursor:pointer}
+.box .son input{width:44px;height:44px}
+.box .hint{position:absolute;left:730px;right:0;top:0;height:134px;display:flex;align-items:center;justify-content:center;text-align:center;font-size:30px;line-height:1.15;padding:0 12px}
+.resultat{position:relative}
+.reset{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:1px solid #3a424b;background:none;color:var(--neige);display:flex;align-items:center;justify-content:center;padding:0}
+.reset:active{transform:rotate(180deg)}
 @media (prefers-reduced-motion:reduce){.tampon.on{transition:none}}
 #confirme{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,9,18,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 #confirme[hidden]{display:none}
@@ -140,6 +149,7 @@ html,body{font-family:var(--se);font-weight:400}
     <article class="billet" aria-labelledby="titre-annonce">
       <div class="bandeau"><span>Départ 04.12</span><span>Voie 4</span></div>
       <div class="corps">
+        <div class="stamp-son" aria-hidden="true">Active<br>le son</div>
         <h1 id="titre-annonce">Le Secret Santa est de retour ! 🎁</h1>
         <p>L’heure fatidique approche. Nos agendas s’affolent, le sapin transpire, et c’est le moment de perpétuer notre grande tradition de fin d’année.</p>
         <p class="regle">La règle d’or : trouver le cadeau idéal pour ton collègue : le clin d’œil hilarant, la babiole inutile mais indispensable ou la mignonnerie absolue. Interdiction de se ruiner, interdiction de faire du premier degré ennuyeux.</p>
@@ -169,15 +179,11 @@ html,body{font-family:var(--se);font-weight:400}
             <div class="t" id="sec_t">Secteur</div>
             <div class="t" id="sec_c"><div class="k"><i>N</i><i>E</i><i>U</i><i>C</i><i>H</i><i>Â</i><i>T</i><i>E</i><i>L</i></div></div>
           </div>
-          <div class="box"><button type="button" id="lancer"><span id="lancer-t">Continuer</span></button></div>
+          <div class="box"><label class="son"><input type="checkbox" id="son" checked> Son</label><span class="hint" id="etat" aria-live="polite">Prêt</span><button type="button" id="lancer"><span id="lancer-t">Continuer</span></button></div>
         </div>
         <div class="tampon" id="tampon">Tirage confirmé</div>
       </div>
       <canvas class="fx" id="fx"></canvas>
-    </div>
-    <div class="ligne">
-      <label class="son"><input type="checkbox" id="son" checked> Son</label>
-      <span class="hint" id="etat" aria-live="polite">Prêt</span>
     </div>
 
   </section>
@@ -185,6 +191,7 @@ html,body{font-family:var(--se);font-weight:400}
   <!-- 3. Résultat -->
   <section id="ecran-resultat" hidden>
     <div class="resultat" id="resultat">
+      <button type="button" class="reset" id="reset" aria-label="Réinitialiser l’app"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.5-4.4L4 8"/><path d="M4 3v5h5"/><path d="M4 13a8 8 0 0 0 14.5 4.4L20 16"/><path d="M20 21v-5h-5"/></svg></button>
       <p class="prenom" id="prenom-de"></p>
       <p class="petit">Tu offres un cadeau à</p>
       <p class="nom-final" id="nom-final"></p>
@@ -203,7 +210,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v12 · 20.11 · 13:30</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v13 · 20.11 · 14:05</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -317,14 +324,15 @@ $('lancer').onclick=function(){if(running)return;if(deja)continuer();else lancer
 $('conf-non').onclick=function(){$('confirme').hidden=true};
 $('conf-oui').onclick=function(){$('confirme').hidden=true;var f=actionOui;actionOui=null;if(f)f()};
 $('confirme').onclick=function(e){if(e.target===$('confirme'))$('confirme').hidden=true};
-$('maj').onclick=function(){
+function majApp(){
   var b=$('maj');b.disabled=true;b.textContent='Mise à jour…';
   var fin=function(){var u=location.pathname+'?m='+Date.now()+(location.hash||'');location.replace(u)};
   var p=[];
   try{if(window.caches&&caches.keys)p.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}))}catch(e){}
   try{if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations)p.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister()}))}))}catch(e){}
   Promise.all(p).then(fin,fin);setTimeout(fin,2500);
-};
+}
+$('maj').onclick=majApp;$('reset').onclick=majApp;
 $('son').onchange=function(){sound=$('son').checked;if(sound){var c=ctx();if(c&&c.resume){try{c.resume()}catch(e){}}tick()}};
 window.addEventListener('resize',echelle);
 window.addEventListener('orientationchange',function(){setTimeout(echelle,200)});
