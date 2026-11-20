@@ -130,8 +130,9 @@ html,body{font-family:var(--se);font-weight:400}
 .resultat{position:relative}
 .reset{position:absolute;top:12px;right:12px;width:44px;height:44px;border-radius:50%;border:1px solid #3a424b;background:none;color:var(--neige);display:flex;align-items:center;justify-content:center;padding:0}
 .reset:active{transform:rotate(180deg)}
-.noel{position:relative;margin:2px auto 0;border-radius:6px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.45);line-height:0}
-.noel img{display:block;width:100%;height:auto}
+.noel{position:relative;margin:2px auto 0;height:300px;border-radius:6px;overflow:hidden;box-shadow:0 14px 30px rgba(0,0,0,.45);line-height:0}
+.noel-in{position:absolute;left:0;width:100%;aspect-ratio:784/1168}
+.noel img{display:block;width:100%;height:100%}
 .noel::after{content:"";position:absolute;inset:8px;border:1px solid rgba(217,180,90,.75);border-radius:4px;pointer-events:none}
 .noel i{position:absolute;border-radius:50%;pointer-events:none;transform:translate(-50%,-50%)}
 .noel .sp{background:#fff;animation:ntw 3.2s ease-in-out infinite}
@@ -201,7 +202,7 @@ html,body{font-family:var(--se);font-weight:400}
     </div>
 
     <figure class="noel" id="noel" aria-hidden="true">
-      <img src="img/noel.jpg" width="784" height="1168" alt="" loading="lazy">
+      <div class="noel-in" id="noel-in"><img src="img/noel.jpg" width="784" height="1168" alt="" loading="lazy"></div>
     </figure>
   </section>
 
@@ -227,7 +228,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v16 · 20.11 · 15:40</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v17 · 20.11 · 16:00</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -330,10 +331,12 @@ function continuer(){
 
 /* ---------- démarrage ---------- */
 function ajusteNoel(){
-  var n=$('noel'),sc=$('ecran-tableau');if(!n||sc.hidden)return;
-  var ft=document.querySelector('footer'),fh=ft?ft.offsetHeight:0,top=n.getBoundingClientRect().top+window.pageYOffset,dispo=window.innerHeight-top-fh-2,max=sc.clientWidth||360;
-  var w=Math.max(160,Math.min(max,Math.floor(dispo*784/1168)));n.style.width=w+'px';
-  var ex=document.documentElement.scrollHeight-window.innerHeight;if(ex>0&&w>160)n.style.width=Math.max(160,w-Math.ceil(ex*784/1168))+'px';
+  var n=$('noel'),inn=$('noel-in'),sc=$('ecran-tableau');if(!n||sc.hidden)return;
+  var ft=document.querySelector('footer'),fh=ft?ft.offsetHeight:0,top=n.getBoundingClientRect().top+window.pageYOffset,max=sc.clientWidth||360;
+  var H=Math.max(200,window.innerHeight-top-fh-2);
+  function pose(h){var w=Math.max(160,Math.min(max,Math.floor(h*784/1168*1.15))),ih=w*1168/784;if(h>ih)h=ih;n.style.width=w+'px';n.style.height=Math.round(h)+'px';inn.style.top=(-(ih-h)*.32)+'px';return h}
+  H=pose(H);
+  var ex=document.documentElement.scrollHeight-window.innerHeight;if(ex>0)pose(H-ex);
 }
 function montrer(id){['ecran-annonce','ecran-tableau','ecran-resultat','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau'){echelle();ajusteNoel()}}
 $('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0);var c0=ctx();if(c0&&c0.resume){try{c0.resume()}catch(e){}}var b=$('lancer');deja=false;$('lancer-t').textContent='Lancer le tirage';b.hidden=true;$('etat').textContent='Écoute l’annonce…';var ok=false,go=function(){if(ok)return;ok=true;b.hidden=false;b.disabled=false;$('etat').textContent='Prêt'};if(!voix('voix/intro.mp3',go))go();else setTimeout(go,13500)};
@@ -358,7 +361,7 @@ function majApp(){
 $('maj').onclick=majApp;$('reset').onclick=majApp;
 $('son').onchange=function(){sound=$('son').checked;if(sound){var c=ctx();if(c&&c.resume){try{c.resume()}catch(e){}}tick()}};
 (function(){
-  var n=$('noel');if(!n)return;
+  var n=$('noel-in');if(!n)return;
   function add(c,st,x,y){var e=document.createElement('i');e.className=c;e.style.left=x+'%';e.style.top=y+'%';if(st)for(var k in st)e.style.setProperty(k,st[k]);n.appendChild(e);return e}
   var i,e;
   for(i=0;i<16;i++){e=add('sp',null,3+Math.random()*94,2+Math.random()*38);var r=1+Math.random()*1.4;e.style.width=e.style.height=r+'px';e.style.animationDelay=(Math.random()*3.2)+'s';e.style.animationDuration=(2+Math.random()*3)+'s'}
