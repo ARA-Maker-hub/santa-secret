@@ -228,7 +228,6 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v17 · 20.11 · 16:00</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -351,14 +350,14 @@ $('conf-non').onclick=function(){$('confirme').hidden=true};
 $('conf-oui').onclick=function(){$('confirme').hidden=true;var f=actionOui;actionOui=null;if(f)f()};
 $('confirme').onclick=function(e){if(e.target===$('confirme'))$('confirme').hidden=true};
 function majApp(){
-  var b=$('maj');b.disabled=true;b.textContent='Mise à jour…';
+  var rb=$('reset');if(rb)rb.disabled=true;
   var fin=function(){var u=location.pathname+'?m='+Date.now()+(location.hash||'');location.replace(u)};
   var p=[];
   try{if(window.caches&&caches.keys)p.push(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){return caches.delete(k)}))}))}catch(e){}
   try{if(navigator.serviceWorker&&navigator.serviceWorker.getRegistrations)p.push(navigator.serviceWorker.getRegistrations().then(function(rs){return Promise.all(rs.map(function(r){return r.unregister()}))}))}catch(e){}
   Promise.all(p).then(fin,fin);setTimeout(fin,2500);
 }
-$('maj').onclick=majApp;$('reset').onclick=majApp;
+$('reset').onclick=majApp;
 $('son').onchange=function(){sound=$('son').checked;if(sound){var c=ctx();if(c&&c.resume){try{c.resume()}catch(e){}}tick()}};
 (function(){
   var n=$('noel-in');if(!n)return;
