@@ -81,6 +81,21 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
 .menu-img .maps{display:inline-block;margin-top:10px;padding:10px 6px;color:var(--neige);font-size:15px;text-decoration:underline}
 .maj{display:flex;justify-content:center;align-items:center;gap:10px;padding:14px 12px 28px;color:var(--gris);font-size:13px}
 .maj button{background:none;border:1px solid #3a424b;border-radius:999px;color:var(--neige);padding:10px 16px;min-height:44px;font:600 14px system-ui,Arial,sans-serif}
+/* police Special Elite : tous les textes sauf le tableau d'affichage (.stage) et la carte menu (image) ; gras seulement pour les titres, bandeau et boutons */
+@font-face{font-family:"Special Elite";src:url(fonts/SpecialElite.ttf) format("truetype");font-weight:400;font-display:swap}
+:root{--se:"Special Elite","Courier New",Courier,monospace}
+html,body{font-family:var(--se);font-weight:400}
+.billet .bandeau{font-family:var(--se);font-weight:700;letter-spacing:.1em}
+.billet h1{font-family:var(--se);font-weight:700;font-size:26px;line-height:1.18}
+.billet p,.billet .regle{font-family:var(--se);font-weight:400}
+.bouton-rouge{font-family:var(--se);font-weight:700;font-size:17px}
+.resultat .nom-final{font-family:var(--se);font-weight:700;font-size:26px;line-height:1.15}
+.resultat .petit,.resultat .rappel,.hint,.son,.maj,.maj span{font-family:var(--se);font-weight:400}
+.maj button,#confirme button{font-family:var(--se);font-weight:700}
+#confirme h2,.erreur h1{font-family:var(--se);font-weight:700}
+#confirme h2{font-size:22px}
+#confirme p,.erreur p{font-family:var(--se);font-weight:400}
+.erreur h1{font-size:24px}
 /* carte menu de Noël */
 .menu{position:relative;margin:14px 0 4px;padding:26px 22px 22px;border-radius:6px;color:#3a2a1c;text-align:center;font-family:"Cormorant Garamond","Playfair Display",Georgia,"Times New Roman",serif;background:radial-gradient(120% 90% at 50% 0%,#fbf5e6 0%,#f1e6cc 100%);box-shadow:0 14px 30px rgba(0,0,0,.45),inset 0 0 0 1px rgba(122,86,30,.25)}
 .menu::before{content:"";position:absolute;inset:8px;border:1.5px solid #b8892b;border-radius:3px;pointer-events:none}
@@ -124,7 +139,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
         <h1 id="titre-annonce">Le Secret Santa est de retour ! 🎁</h1>
         <p>L’heure fatidique approche. Nos agendas s’affolent, le sapin transpire, et c’est le moment de perpétuer notre grande tradition de fin d’année.</p>
         <p class="regle">La règle d’or : trouver le cadeau idéal pour ton collègue : le clin d’œil hilarant, la babiole inutile mais indispensable ou la mignonnerie absolue. Interdiction de se ruiner, interdiction de faire du premier degré ennuyeux.</p>
-        <p>Garde le secret, prépare ton emballage (ou ton sac kraft froissé), et rendez-vous le jour J ! 🎁✨</p>
+        <p>Garde le secret, prépare ton emballage ou ton sac kraft froissé, et rendez-vous le jour J ! 🎁✨</p>
         <button class="bouton-rouge" id="vers-tableau" type="button">Voir mon tirage</button>
       </div>
     </article>
@@ -179,7 +194,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v4 · 20.11 · 06:05</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v5 · 20.11 · 07:40</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
