@@ -81,6 +81,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
 .erreur h1{margin:0 0 6px;font:700 28px/1.1 "Barlow Condensed","Arial Narrow",Arial,sans-serif}
 .erreur p{margin:0}
 @media (prefers-reduced-motion:reduce){.tampon.on{transition:none}}
+#confirme{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(6,9,18,.78);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#confirme[hidden]{display:none}
+#confirme .carte{max-width:360px;width:100%;background:#141a2c;border:1px solid rgba(255,255,255,.18);border-left:6px solid #eb0000;border-radius:16px;padding:22px 20px;color:#f6f5f2;box-shadow:0 20px 50px rgba(0,0,0,.6);text-align:left}
+#confirme h2{margin:0 0 8px;font-size:20px}
+#confirme p{margin:0 0 18px;font-size:16px;line-height:1.45;opacity:.92}
+#confirme .rang{display:flex;gap:10px}
+#confirme button{flex:1;padding:13px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.3);font:inherit;font-weight:700;font-size:16px;cursor:pointer;background:transparent;color:#f6f5f2}
+#confirme button.oui{background:#d9231b;border-color:rgba(255,255,255,.35)}
 </style>
 </head>
 <body>
@@ -146,6 +154,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
   </section>
 
 </main>
+<div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p>Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
 'use strict';
@@ -231,7 +240,7 @@ function lancer(){
   var fin=1500+(Math.max(nom.length,1)-1)*170;
   at(fin+350,function(){$('tampon').classList.add('on');thud();ding();confetti();voix('voix/'+(info.id||'resultat')+'.mp3')});
   at(fin+1500,function(){
-    running=false;btn.disabled=false;btn.textContent='Revoir le tirage';$('etat').textContent='Terminé';
+    running=false;deja=true;btn.disabled=false;btn.textContent='Revoir le tirage';$('etat').textContent='Terminé';
     $('nom-final').textContent=info.pour;$('date-rev').textContent=info.date||'04.12.2026';$('resultat').hidden=false;
   });
 }
@@ -239,8 +248,13 @@ function lancer(){
 /* ---------- démarrage ---------- */
 function montrer(id){['ecran-annonce','ecran-tableau','ecran-erreur'].forEach(function(x){$(x).hidden=(x!==id)});if(id==='ecran-tableau')echelle()}
 $('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,0)};
-$('lancer').onclick=lancer;
-$('rejouer').onclick=function(){lancer();window.scrollTo(0,0)};
+var deja=false;
+function demander(){if(running)return;if(!deja){lancer();return}$('confirme').hidden=false;$('conf-oui').focus()}
+$('lancer').onclick=demander;
+$('rejouer').onclick=function(){demander();window.scrollTo(0,0)};
+$('conf-non').onclick=function(){$('confirme').hidden=true};
+$('conf-oui').onclick=function(){$('confirme').hidden=true;lancer()};
+$('confirme').onclick=function(e){if(e.target===$('confirme'))$('confirme').hidden=true};
 $('son').onchange=function(){sound=$('son').checked;if(sound){var c=ctx();if(c&&c.resume){try{c.resume()}catch(e){}}tick()}};
 window.addEventListener('resize',echelle);
 window.addEventListener('orientationchange',function(){setTimeout(echelle,200)});
