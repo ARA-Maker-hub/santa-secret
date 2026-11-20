@@ -75,7 +75,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
 .resultat .nom-final{margin:0;font:700 34px/1.1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;color:var(--jaune);overflow-wrap:anywhere}
 .resultat .rappel{margin:6px 0 0;font-size:15px}
 .ligne{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.menu-img{margin:14px 0 4px;text-align:center}
+.menu-img{position:relative;margin:14px 0 4px;text-align:center}
+.menu-img .zone-maps{position:absolute;left:26%;width:48%;top:85.5%;height:10.5%;display:block;-webkit-tap-highlight-color:rgba(245,196,0,.25);border-radius:6px}
 .menu-img img{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .menu-img .maps{display:inline-block;margin-top:10px;padding:10px 6px;color:var(--neige);font-size:15px;text-decoration:underline}
 .maj{display:flex;justify-content:center;align-items:center;gap:10px;padding:14px 12px 28px;color:var(--gris);font-size:13px}
@@ -166,9 +167,8 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
       <p class="rappel">Rendez-vous le <span id="date-rev">04.12.2026</span> au repas de fin d’année. Garde le secret.</p>
       <figure class="menu-img">
         <img src="img/menu-noel.jpg" width="784" height="1168" loading="lazy" alt="Menu de Noël, vendredi 4 décembre 2026. Repas : feuilleté de chanterelles à la crème ; bœuf braisé, cuisson lente à l’ancienne, écrasé de pommes de terre, légumes du jour ; boule de sorbet maison aux fruits. Boissons : demi-litre de vin rouge, goron valaisan, pour deux personnes ; eau minérale. Restaurant Le Sporting, Allée des Marronniers 7, 2013 Colombier.">
-        <a class="maps" href="https://maps.google.com/?q=Restaurant+Le+Sporting,+All.+des+Marronniers+7,+2013+Colombier" target="_blank" rel="noopener">Ouvrir le restaurant dans Maps</a>
+        <a class="zone-maps" href="https://maps.google.com/?q=Restaurant+Le+Sporting,+All.+des+Marronniers+7,+2013+Colombier" target="_blank" rel="noopener" aria-label="Ouvrir Restaurant Le Sporting, Allée des Marronniers 7, 2013 Colombier, dans Maps"></a>
       </figure>
-      <button class="lien" id="rejouer" type="button">Revoir l’animation</button>
     </div>
   </section>
 
@@ -179,7 +179,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v2 · 20.11 · 05:55</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v3 · 20.11 · 06:00</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p>Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -277,7 +277,6 @@ $('vers-tableau').onclick=function(){montrer('ecran-tableau');window.scrollTo(0,
 var deja=false;
 function demander(){if(running)return;if(!deja){lancer();return}$('confirme').hidden=false;$('conf-oui').focus()}
 $('lancer').onclick=demander;
-$('rejouer').onclick=function(){demander();window.scrollTo(0,0)};
 $('conf-non').onclick=function(){$('confirme').hidden=true};
 $('conf-oui').onclick=function(){$('confirme').hidden=true;lancer()};
 $('confirme').onclick=function(e){if(e.target===$('confirme'))$('confirme').hidden=true};
