@@ -69,15 +69,13 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--jaune);outline-
 #lancer:disabled{cursor:default;opacity:.55}
 #lancer-t{display:inline-block;transform:scale(1.1,1.25)}
 .fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:6}
-.tampon{pointer-events:none;position:absolute;left:83%;top:79%;transform:translate(-50%,-50%) rotate(-5deg) scale(2.4);opacity:0;border:4px solid var(--rouge);color:var(--rouge);border-radius:8px;padding:4px 14px;font:700 30px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;letter-spacing:.06em;text-align:center;white-space:nowrap;background:rgba(14,18,22,.55);z-index:5}
-.tampon.on{opacity:1;transform:translate(-50%,-50%) rotate(-5deg) scale(.9);transition:transform .22s cubic-bezier(.2,1.6,.5,1),opacity .1s}
-.tampon small{display:block;margin-top:5px;font:600 14px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;letter-spacing:.14em;color:var(--neige)}
+.tampon{pointer-events:none;position:absolute;left:40px;top:425px;transform-origin:0 0;transform:translate(31px,-59px) scale(2.9) rotate(-5deg);opacity:0;border:4px solid var(--rouge);color:var(--rouge);border-radius:8px;padding:4px 14px;font:700 30px/1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;letter-spacing:.06em;text-align:center;white-space:nowrap;background:rgba(14,18,22,.55);z-index:5}
+.tampon.on{opacity:1;transform:translate(31px,-59px) scale(1.2) rotate(-5deg);transition:transform .22s cubic-bezier(.2,1.6,.5,1),opacity .1s}
 
 .hint{color:var(--gris);font-size:14px;margin:0}
-.rotation{display:none;color:var(--jaune);font-size:14px;margin:0}
-@media (orientation:portrait) and (max-width:600px){.rotation{display:block}}
 .resultat{background:var(--quai);border:1px solid #3a424b;border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
-.resultat .petit{margin:0;color:var(--gris);font-size:14px}
+.resultat .petit{margin:4px 0 0;color:var(--gris);font-size:14px}
+.resultat .prenom{margin:0;color:#0b7ef9;font-weight:700;font-size:17px;font-family:var(--se);overflow-wrap:anywhere}
 .resultat .nom-final{margin:0;font:700 34px/1.1 "Barlow Condensed","Arial Narrow",Arial,sans-serif;color:var(--jaune);overflow-wrap:anywhere}
 .resultat .rappel{margin:6px 0 0;font-size:15px}
 .ligne{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -153,7 +151,6 @@ html,body{font-family:var(--se);font-weight:400}
 
   <!-- 2. Tableau -->
   <section id="ecran-tableau" class="scene" hidden>
-    <p class="rotation">Astuce : tourne ton téléphone en mode paysage pour voir le tableau en grand.</p>
     <div class="wrap" id="wrap">
       <div class="stage" id="stage">
         <div class="dots"></div>
@@ -174,7 +171,7 @@ html,body{font-family:var(--se);font-weight:400}
           </div>
           <div class="box"><button type="button" id="lancer"><span id="lancer-t">Lancer le tirage</span></button></div>
         </div>
-        <div class="tampon" id="tampon">Voyage confirmé<small>Bon voyage, bon cadeau</small></div>
+        <div class="tampon" id="tampon">Tirage confirmé</div>
       </div>
       <canvas class="fx" id="fx"></canvas>
     </div>
@@ -184,9 +181,10 @@ html,body{font-family:var(--se);font-weight:400}
     </div>
 
     <div class="resultat" id="resultat" hidden>
+      <p class="prenom" id="prenom-de"></p>
       <p class="petit">Tu offres un cadeau à</p>
       <p class="nom-final" id="nom-final"></p>
-      <p class="rappel">Rendez-vous le <span id="date-rev">04.12.2026</span> au repas de fin d’année. Garde le secret.</p>
+      <p class="rappel">Rendez-vous le <span id="date-rev">04.12.2026</span>.<br>Garde le secret!!</p>
       <figure class="menu-img">
         <img src="img/menu-noel.jpg" width="784" height="1168" loading="lazy" alt="Menu de Noël, vendredi 4 décembre 2026. Repas : feuilleté de chanterelles à la crème ; bœuf braisé, cuisson lente à l’ancienne, écrasé de pommes de terre, légumes du jour ; boule de sorbet maison aux fruits. Boissons : demi-litre de vin rouge, goron valaisan, pour deux personnes ; eau minérale. Restaurant Le Sporting, Allée des Marronniers 7, 2013 Colombier.">
         <a class="zone-maps" href="https://maps.google.com/?q=Restaurant+Le+Sporting,+All.+des+Marronniers+7,+2013+Colombier" target="_blank" rel="noopener" aria-label="Ouvrir Restaurant Le Sporting, Allée des Marronniers 7, 2013 Colombier, dans Maps"></a>
@@ -201,7 +199,7 @@ html,body{font-family:var(--se);font-weight:400}
   </section>
 
 </main>
-<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v7 · 20.11 · 11:30</span></footer>
+<footer class="maj"><button type="button" id="maj">Mettre à jour</button><span id="ver">v8 · 20.11 · 11:55</span></footer>
 <div id="confirme" hidden role="dialog" aria-modal="true" aria-labelledby="conf-t"><div class="carte"><h2 id="conf-t">Relancer le tirage ?</h2><p id="conf-p">Tu as déjà découvert ton destinataire. Relancer ne change rien : tu retomberas sur le même nom. 😉</p><div class="rang"><button type="button" id="conf-non">Annuler</button><button type="button" class="oui" id="conf-oui">Relancer</button></div></div></div>
 <script>
 (function(){
@@ -216,7 +214,7 @@ var info=null,running=false,timers=[],rafs=[],sound=true,ac=null;
 function b64d(s){s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
 function charger(){
   var h=(location.hash||'').replace(/^#/,'');
-  if(h==='demo'){return Promise.resolve({de:'Participant 1',pour:'LAURENT',date:'04.12.2026',demo:true})}
+  if(h==='demo'){return Promise.resolve({de:'Driss',pour:'LAURENT',date:'04.12.2026',demo:true})}
   var m=/^(p\d{2})\.([A-Za-z0-9_-]{22})$/.exec(h);
   if(!m||!window.crypto||!crypto.subtle)return Promise.reject();
   return fetch('data.json',{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(d){
@@ -294,7 +292,7 @@ function lancer(){
   at(fin+450,function(){$('tampon').classList.add('on');thud();ding();confetti();voix('voix/'+(info.id||'resultat')+'.mp3')});
   at(fin+1600,function(){
     running=false;deja=true;btn.disabled=false;$('lancer-t').textContent='Revoir le tirage';$('etat').textContent='Terminé';
-    $('nom-final').textContent=info.pour;$('date-rev').textContent=info.date||'04.12.2026';$('resultat').hidden=false;
+    $('prenom-de').textContent=(info.de||'').toUpperCase()+',';$('nom-final').textContent=info.pour;$('date-rev').textContent=info.date||'04.12.2026';$('resultat').hidden=false;
   });
 }
 
